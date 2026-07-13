@@ -64,19 +64,27 @@ export default function ComingSoon() {
   useEffect(() => {
     // Basic frontend domain detection just for UI purposes
     const hostname = window.location.hostname;
-    if (hostname.includes("servizind.com")) setActiveCountry(countries.find(c => c.code === "IN")!);
-    else if (hostname.includes("servizoman.com")) setActiveCountry(countries.find(c => c.code === "OM")!);
-    else if (hostname.includes("servizksa.com")) setActiveCountry(countries.find(c => c.code === "SA")!);
-    else if (hostname.includes("servizuae.com")) setActiveCountry(countries.find(c => c.code === "AE")!);
+    let initialCountry = countries[1]; // Default
+    let isOnLocalizedDomain = false;
 
-    // Fetch IP config for automatic location detection
-    fetch("https://ipapi.co/json/")
+    if (hostname.includes("servizind.com")) { initialCountry = countries.find(c => c.code === "IN")!; isOnLocalizedDomain = true; }
+    else if (hostname.includes("servizoman.com")) { initialCountry = countries.find(c => c.code === "OM")!; isOnLocalizedDomain = true; }
+    else if (hostname.includes("servizksa.com")) { initialCountry = countries.find(c => c.code === "SA")!; isOnLocalizedDomain = true; }
+    else if (hostname.includes("servizuae.com")) { initialCountry = countries.find(c => c.code === "AE")!; isOnLocalizedDomain = true; }
+
+    setActiveCountry(initialCountry);
+
+    // Fetch IP config for automatic location detection using GeoJS (more reliable, no CORS/adblock issues)
+    fetch("https://get.geojs.io/v1/ip/country.json")
       .then((res) => res.json())
       .then((data) => {
-        if (data && data.country_code) {
-          const detectedCountry = countries.find((c) => c.code === data.country_code);
+        if (data && data.country) {
+          const detectedCountry = countries.find((c) => c.code === data.country);
           if (detectedCountry) {
-            setActiveCountry(detectedCountry);
+            // Only auto-update the active country if we are on a non-localized domain (like localhost or a global domain)
+            if (!isOnLocalizedDomain) {
+              setActiveCountry(detectedCountry);
+            }
             // Show popup if they are not on the localized domain
             if (hostname !== detectedCountry.domain && !hostname.includes(detectedCountry.domain)) {
               setSuggestedLocation(detectedCountry);
@@ -89,6 +97,12 @@ export default function ComingSoon() {
   }, []);
 
   const handleCountrySelect = (country: typeof countries[0]) => {
+    setActiveCountry(country);
+    setIsCountryDropdownOpen(false);
+    // Removed redirect here so it doesn't auto-goto other places
+  };
+
+  const handlePopupRedirect = (country: typeof countries[0]) => {
     window.location.href = `https://${country.domain}`;
   };
 
@@ -211,7 +225,7 @@ export default function ComingSoon() {
 
             <div className="flex flex-col sm:flex-row gap-4 w-full">
               <button 
-                onClick={() => handleCountrySelect(suggestedLocation)}
+                onClick={() => handlePopupRedirect(suggestedLocation)}
                 className="flex-1 bg-gold text-black py-3 sm:py-3.5 px-4 rounded-full font-semibold hover:bg-gold/90 transition-colors text-[15px]"
               >
                 Go to {suggestedLocation.domain}
