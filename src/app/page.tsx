@@ -99,7 +99,7 @@ export default function ComingSoon() {
   const handleCountrySelect = (country: typeof countries[0]) => {
     setActiveCountry(country);
     setIsCountryDropdownOpen(false);
-    // Removed redirect here so it doesn't auto-goto other places
+    window.location.href = `https://${country.domain}`;
   };
 
   const handlePopupRedirect = (country: typeof countries[0]) => {
