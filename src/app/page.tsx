@@ -76,11 +76,11 @@ export default function ComingSoon() {
 
   return (
     <main className="min-h-screen bg-[#0B0A0A] text-white flex flex-col relative overflow-hidden">
-      
+
       {/* Navbar */}
       <header className="fixed top-0 left-0 w-full z-50 bg-[#0b0a0a]/95 backdrop-blur-md border-b border-white/5 h-20">
         <div className="w-full h-full mx-auto px-6 lg:px-12 flex items-center justify-between relative">
-          
+
           <div className="flex items-center gap-2 group cursor-pointer">
             <span className="text-2xl md:text-3xl font-black italic tracking-wide text-white uppercase select-none transition-transform group-hover:scale-[1.02]">
               SERV
@@ -110,11 +110,10 @@ export default function ComingSoon() {
                   <button
                     key={country.name}
                     onClick={() => handleCountrySelect(country)}
-                    className={`flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors cursor-pointer w-full hover:bg-gold/10 hover:text-gold ${
-                      activeCountry.name === country.name
+                    className={`flex items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors cursor-pointer w-full hover:bg-gold/10 hover:text-gold ${activeCountry.name === country.name
                         ? "bg-white/5 text-gold font-bold"
                         : "text-[#D4D2CD]"
-                    }`}
+                      }`}
                   >
                     {country.flag}
                     <span className="font-sans tracking-wider">{country.name}</span>
@@ -128,8 +127,8 @@ export default function ComingSoon() {
 
       {/* Hero Section */}
       <section className="flex-1 flex flex-col items-center justify-center px-6 pt-24 hero-overlay">
-        <div className="max-w-3xl w-full mx-auto text-center z-10 glass-card p-12 rounded-3xl shadow-2xl relative overflow-hidden animate-slide-up">
-          
+        <div className="max-w-3xl w-full mx-auto text-center z-10 glass-card p-8 sm:p-10 md:p-12 rounded-[2rem] shadow-2xl relative overflow-hidden animate-slide-up">
+
           {/* Subtle glow behind card */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gold/5 rounded-full blur-[100px] pointer-events-none" />
 
@@ -141,13 +140,13 @@ export default function ComingSoon() {
                 {/* Rotating border effect */}
                 <div className="absolute inset-[-1px] rounded-full border border-transparent border-t-gold/50 animate-[spin_3s_linear_infinite]" />
                 <div className="absolute inset-[-6px] rounded-full border border-white/5 border-b-gold/20 animate-[spin_5s_linear_infinite_reverse]" />
-                
+
                 {/* Location Map Pin Icon */}
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 text-gold drop-shadow-[0_0_12px_rgba(201,152,63,0.8)] transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                   <circle cx="12" cy="10" r="3" />
                 </svg>
-                
+
                 {/* Twinkling Sparkle */}
                 <svg className="absolute top-4 right-4 w-4 h-4 text-white animate-pulse drop-shadow-[0_0_5px_rgba(255,255,255,0.8)]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 1l2.8 7.2L22 11l-7.2 2.8L12 21l-2.8-7.2L2 11l7.2-2.8L12 1z" />
@@ -156,16 +155,16 @@ export default function ComingSoon() {
             </div>
 
             <div className="space-y-4">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white tracking-tight leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white tracking-tight leading-tight">
                 Expanding to <br className="sm:hidden" />
                 <span className="text-gold text-glow relative inline-block mt-1 sm:mt-0">
-                  {activeCountry.name}
+                  Your Region
                   <div className="absolute -bottom-2 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-gold to-transparent opacity-50" />
                 </span>
               </h1>
-              
-              <p className="text-lg md:text-xl text-[#A19D94] font-sans max-w-lg mx-auto leading-relaxed mt-4">
-                Our services are not yet available in your region. We look forward to serving you in the near future.
+
+              <p className="text-base sm:text-lg md:text-xl text-[#A19D94] font-sans max-w-lg mx-auto leading-relaxed mt-4 px-2 sm:px-0">
+                Our services are not currently available in your region. We look forward to serving you in the near future
               </p>
             </div>
           </div>

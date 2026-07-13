@@ -13,7 +13,7 @@ const cormorant = Cormorant({
 });
 
 export const metadata: Metadata = {
-  title: "ServEase | Coming Soon",
+  title: "SERVIZ - Coming Soon",
   description: "ServEase is coming soon to your location.",
 };
 
