@@ -74,8 +74,18 @@ export default function ComingSoon() {
 
     setActiveCountry(initialCountry);
 
-    // If user previously made a manual choice, DO NOT bother them with IP detection popups.
-    const hasUserMadeChoice = localStorage.getItem("userSelectedCountry");
+    let hasUserMadeChoice = localStorage.getItem("userSelectedCountry");
+
+    // Check if they just arrived from a dropdown selection on another domain
+    const urlParams = new URLSearchParams(window.location.search);
+    const chosenParam = urlParams.get("chosen");
+    
+    if (chosenParam) {
+      hasUserMadeChoice = chosenParam;
+      localStorage.setItem("userSelectedCountry", chosenParam);
+      // Clean up the URL so it looks nice
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
 
     if (!hasUserMadeChoice) {
       // Fetch IP config for automatic location detection using GeoJS (more reliable, no CORS/adblock issues)
@@ -111,8 +121,8 @@ export default function ComingSoon() {
     localStorage.setItem("userSelectedCountry", country.code);
     setActiveCountry(country);
     setIsCountryDropdownOpen(false);
-    // As requested: "be there only" - no automatic redirect from the dropdown. 
-    // It only updates the UI and saves their preference.
+    // Redirect to the actual domain, passing their choice so the new domain doesn't popup asking them to go back!
+    window.location.href = `https://${country.domain}?chosen=${country.code}`;
   };
 
   const handlePopupRedirect = (country: typeof countries[0]) => {
