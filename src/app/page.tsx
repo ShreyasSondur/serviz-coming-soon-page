@@ -74,36 +74,55 @@ export default function ComingSoon() {
 
     setActiveCountry(initialCountry);
 
-    // Fetch IP config for automatic location detection using GeoJS (more reliable, no CORS/adblock issues)
-    fetch("https://get.geojs.io/v1/ip/country.json")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && data.country) {
-          const detectedCountry = countries.find((c) => c.code === data.country);
-          if (detectedCountry) {
-            // Only auto-update the active country if we are on a non-localized domain (like localhost or a global domain)
-            if (!isOnLocalizedDomain) {
-              setActiveCountry(detectedCountry);
-            }
-            // Show popup if they are not on the localized domain
-            if (hostname !== detectedCountry.domain && !hostname.includes(detectedCountry.domain)) {
-              setSuggestedLocation(detectedCountry);
-              setShowLocationPopup(true);
+    // If user previously made a manual choice, DO NOT bother them with IP detection popups.
+    const hasUserMadeChoice = localStorage.getItem("userSelectedCountry");
+
+    if (!hasUserMadeChoice) {
+      // Fetch IP config for automatic location detection using GeoJS (more reliable, no CORS/adblock issues)
+      fetch("https://get.geojs.io/v1/ip/country.json")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.country) {
+            const detectedCountry = countries.find((c) => c.code === data.country);
+            if (detectedCountry) {
+              // Only auto-update the active country if we are on a non-localized domain (like localhost or a global domain)
+              if (!isOnLocalizedDomain) {
+                setActiveCountry(detectedCountry);
+              }
+              // Show popup if they are not on the localized domain
+              if (hostname !== detectedCountry.domain && !hostname.includes(detectedCountry.domain)) {
+                setSuggestedLocation(detectedCountry);
+                setShowLocationPopup(true);
+              }
             }
           }
-        }
-      })
-      .catch((err) => console.error("IP config error:", err));
+        })
+        .catch((err) => console.error("IP config error:", err));
+    } else {
+      // If they made a choice and are on a non-localized domain, respect their choice
+      if (!isOnLocalizedDomain) {
+        const savedCountry = countries.find(c => c.code === hasUserMadeChoice);
+        if (savedCountry) setActiveCountry(savedCountry);
+      }
+    }
   }, []);
 
   const handleCountrySelect = (country: typeof countries[0]) => {
+    localStorage.setItem("userSelectedCountry", country.code);
     setActiveCountry(country);
     setIsCountryDropdownOpen(false);
-    window.location.href = `https://${country.domain}`;
+    // As requested: "be there only" - no automatic redirect from the dropdown. 
+    // It only updates the UI and saves their preference.
   };
 
   const handlePopupRedirect = (country: typeof countries[0]) => {
+    localStorage.setItem("userSelectedCountry", country.code);
     window.location.href = `https://${country.domain}`;
+  };
+
+  const handlePopupStay = () => {
+    localStorage.setItem("userSelectedCountry", activeCountry.code);
+    setShowLocationPopup(false);
   };
 
   return (
@@ -231,7 +250,7 @@ export default function ComingSoon() {
                 Go to {suggestedLocation.domain}
               </button>
               <button 
-                onClick={() => setShowLocationPopup(false)}
+                onClick={handlePopupStay}
                 className="flex-1 bg-transparent border border-white/10 text-[#A19D94] hover:text-white py-3 sm:py-3.5 px-4 rounded-full hover:bg-white/5 transition-colors text-[15px]"
               >
                 Stay Here
