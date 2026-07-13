@@ -30,12 +30,10 @@ const UAEFlag = (
   </svg>
 );
 
-const KazFlag = (
+const KSAFlag = (
   <svg className="w-5 h-3.5 rounded-sm object-cover" viewBox="0 0 3 2">
-    <rect width="3" height="2" fill="#00AFCA" />
-    <circle cx="1.5" cy="0.9" r="0.4" fill="#F4CB38" />
-    {/* Simplified sun rays & eagle for icon scale */}
-    <path d="M 1.1 1.2 Q 1.5 1.5 1.9 1.2 Q 1.5 1.3 1.1 1.2" fill="#F4CB38" />
+    <rect width="3" height="2" fill="#006C35" />
+    <path d="M0.5,0.8 Q1.5,0.6 2.5,0.8 M0.8,1.4 L2.2,1.4 M2.1,1.3 L2.2,1.4 L2.1,1.5" stroke="#FFF" strokeWidth="0.1" fill="none" strokeLinecap="round" />
   </svg>
 );
 
@@ -43,12 +41,14 @@ const countries = [
   { name: "UAE", code: "AE", domain: "servizuae.com", flag: UAEFlag, ready: true },
   { name: "India", code: "IN", domain: "servizind.com", flag: IndiaFlag, ready: false },
   { name: "Oman", code: "OM", domain: "servizoman.com", flag: OmanFlag, ready: false },
-  { name: "Kazakhstan", code: "KZ", domain: "servizkaz.com", flag: KazFlag, ready: false },
+  { name: "KSA", code: "SA", domain: "servizksa.com", flag: KSAFlag, ready: false },
 ];
 
 export default function ComingSoon() {
   const [activeCountry, setActiveCountry] = useState(countries[1]); // Default to a coming soon country if un-detected
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
+  const [suggestedLocation, setSuggestedLocation] = useState<typeof countries[0] | null>(null);
+  const [showLocationPopup, setShowLocationPopup] = useState(false);
   const countryDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -66,8 +66,26 @@ export default function ComingSoon() {
     const hostname = window.location.hostname;
     if (hostname.includes("servizind.com")) setActiveCountry(countries.find(c => c.code === "IN")!);
     else if (hostname.includes("servizoman.com")) setActiveCountry(countries.find(c => c.code === "OM")!);
-    else if (hostname.includes("servizkaz.com")) setActiveCountry(countries.find(c => c.code === "KZ")!);
+    else if (hostname.includes("servizksa.com")) setActiveCountry(countries.find(c => c.code === "SA")!);
     else if (hostname.includes("servizuae.com")) setActiveCountry(countries.find(c => c.code === "AE")!);
+
+    // Fetch IP config for automatic location detection
+    fetch("https://ipapi.co/json/")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.country_code) {
+          const detectedCountry = countries.find((c) => c.code === data.country_code);
+          if (detectedCountry) {
+            setActiveCountry(detectedCountry);
+            // Show popup if they are not on the localized domain
+            if (hostname !== detectedCountry.domain && !hostname.includes(detectedCountry.domain)) {
+              setSuggestedLocation(detectedCountry);
+              setShowLocationPopup(true);
+            }
+          }
+        }
+      })
+      .catch((err) => console.error("IP config error:", err));
   }, []);
 
   const handleCountrySelect = (country: typeof countries[0]) => {
@@ -170,6 +188,44 @@ export default function ComingSoon() {
           </div>
         </div>
       </section>
+
+      {/* Location Suggestion Popup */}
+      {showLocationPopup && suggestedLocation && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-[#111111] border border-gold/20 rounded-3xl p-8 sm:p-10 max-w-[460px] w-full shadow-2xl relative flex flex-col items-center text-center animate-in zoom-in-95 duration-300">
+            
+            {/* Flag Icon */}
+            <div className="w-16 h-16 rounded-full border border-gold/30 flex items-center justify-center mb-6 bg-transparent">
+              <div className="scale-150">
+                {suggestedLocation.flag}
+              </div>
+            </div>
+
+            <h3 className="text-2xl sm:text-[26px] font-serif font-bold text-white mb-5">
+              Are you visiting from {suggestedLocation.name}?
+            </h3>
+            
+            <p className="text-[#A19D94] text-[15px] sm:text-base leading-relaxed mb-8 px-2">
+              We detected your location is {suggestedLocation.name}. Would you like to switch to our local site <span className="text-gold font-medium">{suggestedLocation.domain}</span> to get localized services, partner support, and special deals?
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 w-full">
+              <button 
+                onClick={() => handleCountrySelect(suggestedLocation)}
+                className="flex-1 bg-gold text-black py-3 sm:py-3.5 px-4 rounded-full font-semibold hover:bg-gold/90 transition-colors text-[15px]"
+              >
+                Go to {suggestedLocation.domain}
+              </button>
+              <button 
+                onClick={() => setShowLocationPopup(false)}
+                className="flex-1 bg-transparent border border-white/10 text-[#A19D94] hover:text-white py-3 sm:py-3.5 px-4 rounded-full hover:bg-white/5 transition-colors text-[15px]"
+              >
+                Stay Here
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </main>
   );
