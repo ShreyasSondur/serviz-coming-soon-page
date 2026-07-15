@@ -141,17 +141,17 @@ export default function ComingSoon() {
       {/* Navbar */}
       <header className="fixed top-0 left-0 w-full z-50 bg-[#0b0a0a]/95 backdrop-blur-md border-b border-white/5 h-20">
         <div className="w-full h-full mx-auto px-6 lg:px-12 flex items-center justify-between relative">
-
-          <div className="flex items-center gap-2 group cursor-pointer">
-            <span className="text-2xl md:text-3xl font-black italic tracking-wide text-white uppercase select-none transition-transform group-hover:scale-[1.02]">
-              SERV
-              <span className="text-gold font-extrabold text-glow">
-                IZ
+          <div className="flex items-center gap-4 sm:gap-8">
+            <div className="flex items-center gap-2 group cursor-pointer">
+              <span className="text-2xl md:text-3xl font-black italic tracking-wide text-white uppercase select-none transition-transform group-hover:scale-[1.02]">
+                SERV
+                <span className="text-gold font-extrabold text-glow">
+                  IZ
+                </span>
               </span>
-            </span>
-          </div>
+            </div>
 
-          <div className="relative" ref={countryDropdownRef}>
+            <div className="relative" ref={countryDropdownRef}>
             <button
               onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
               className="flex items-center gap-1.5 bg-[#141414]/90 hover:bg-[#202020]/90 text-white px-3 py-2 rounded-full border border-white/10 hover:border-gold/30 transition-all text-sm font-sans font-semibold cursor-pointer focus:outline-none"
@@ -166,7 +166,7 @@ export default function ComingSoon() {
             </button>
 
             {isCountryDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-[#121212]/95 backdrop-blur-md border border-white/10 rounded-xl shadow-xl py-1.5 flex flex-col z-50 animate-in fade-in duration-200">
+              <div className="absolute left-0 mt-2 w-48 bg-[#121212]/95 backdrop-blur-md border border-white/10 rounded-xl shadow-xl py-1.5 flex flex-col z-50 animate-in fade-in duration-200">
                 {countries.map((country) => (
                   <button
                     key={country.name}
@@ -182,6 +182,7 @@ export default function ComingSoon() {
                 ))}
               </div>
             )}
+          </div>
           </div>
         </div>
       </header>
