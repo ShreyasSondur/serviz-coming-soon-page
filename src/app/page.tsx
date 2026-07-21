@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { usePathname } from "next/navigation";
+
 
 // Country configuration with custom SVG flags
 const IndiaFlag = (
@@ -72,6 +72,7 @@ export default function ComingSoon() {
     else if (hostname.includes("servizksa.com")) { initialCountry = countries.find(c => c.code === "SA")!; isOnLocalizedDomain = true; }
     else if (hostname.includes("servizuae.com")) { initialCountry = countries.find(c => c.code === "AE")!; isOnLocalizedDomain = true; }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setActiveCountry(initialCountry);
 
     let hasUserMadeChoice = localStorage.getItem("userSelectedCountry");
@@ -122,12 +123,12 @@ export default function ComingSoon() {
     setActiveCountry(country);
     setIsCountryDropdownOpen(false);
     // Redirect to the actual domain, passing their choice so the new domain doesn't popup asking them to go back!
-    window.location.href = `https://${country.domain}?chosen=${country.code}`;
+    window.location.assign(`https://${country.domain}?chosen=${country.code}`);
   };
 
   const handlePopupRedirect = (country: typeof countries[0]) => {
     localStorage.setItem("userSelectedCountry", country.code);
-    window.location.href = `https://${country.domain}`;
+    window.location.assign(`https://${country.domain}`);
   };
 
   const handlePopupStay = () => {
